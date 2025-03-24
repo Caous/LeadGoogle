@@ -1,19 +1,113 @@
+import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
+import Select from "../../components/form/Select";
 import BasicTableOne from "../../components/tables/BasicTables/BasicTableOne";
 import Button from "../../components/ui/button/Button";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
+import { LeadGoogleDto } from "../../models/LeadsGoogleDto";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postAsync } from "../../services/LeadsGoogleService";
 
 export default function BasicTables() {
+
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
+  const [formData, setFormData] = useState<LeadGoogleDto>({
+    id: {
+      timestamp: 0, 
+      creationTime: "",
+    },
+    name: "",
+    phoneNumber: "",
+    category: "",
+    address: "",
+    timeOpen: "",
+    star: "",
+    webSite: "",
+    email: "",
+    status: 0,
+    observacao: "",
+    social: ""
+  });
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: postAsync,
+    onSuccess: () => {
+      queryClient.invalidateQueries<LeadGoogleDto[]>({
+        queryKey: ["leadGoogle"],
+      });
+      closeModal();
+    },
+  });
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    mutation.mutate(formData);
     closeModal();
   };
+
+  const optionsCategoryLead = [
+    { value: "odontologia", label: "Odontologia" },
+    { value: "clinica-medica", label: "Clínica Médica" },
+    { value: "hospital", label: "Hospital" },
+    { value: "farmacia", label: "Farmácia" },
+    { value: "mecanico", label: "Mecânico" },
+    { value: "auto-peças", label: "Autopeças" },
+    { value: "concessionaria", label: "Concessionária" },
+    { value: "mercado", label: "Supermercado" },
+    { value: "padaria", label: "Padaria" },
+    { value: "restaurante", label: "Restaurante" },
+    { value: "lanchonete", label: "Lanchonete" },
+    { value: "petshop", label: "Pet Shop" },
+    { value: "academia", label: "Academia" },
+    { value: "estetica", label: "Clínica de Estética" },
+    { value: "barbearia", label: "Barbearia" },
+    { value: "salão-beleza", label: "Salão de Beleza" },
+    { value: "hotel", label: "Hotel" },
+    { value: "motel", label: "Motel" },
+    { value: "pousada", label: "Pousada" },
+    { value: "imobiliaria", label: "Imobiliária" },
+    { value: "advocacia", label: "Escritório de Advocacia" },
+    { value: "contabilidade", label: "Escritório de Contabilidade" },
+    { value: "escola", label: "Escola" },
+    { value: "faculdade", label: "Faculdade" },
+    { value: "loja-roupas", label: "Loja de Roupas" },
+    { value: "loja-celular", label: "Assistência Técnica Celular" },
+    { value: "informatica", label: "Assistência Técnica Informática" },
+    { value: "lavanderia", label: "Lavanderia" },
+    { value: "floricultura", label: "Floricultura" },
+    { value: "livraria", label: "Livraria" },
+    { value: "construcao", label: "Materiais de Construção" },
+    { value: "moveis", label: "Loja de Móveis" }
+  ];
+
+  const options = [
+    { value: "0", label: "Novo" },
+    { value: "1", label: "Buscando informações" },
+    { value: "2", label: "Prospecção" },
+    { value: "3", label: "Aguardando decisão" },
+    { value: "4", label: "Negociação" },
+    { value: "5", label: "Reunião" },
+    { value: "6", label: "Cancelado" },
+    { value: "7", label: "Requalificado" },
+    { value: "8", label: "Qualificado" },
+    { value: "9", label: "Convertido" }
+  ];
+
+  const handleSelectChange = (value: string) => {
+    formData.status = Number.parseInt(value);
+  };
+
+  const handleSelectChangeCategory = (value: string) => {
+    formData.category = value;
+  };
+
+
+
   return (
     <>
       <PageMeta
@@ -76,13 +170,13 @@ export default function BasicTables() {
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Adicionar um lead novo
+              Cadastrar um lead
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Adicione as informações para registrar um novo Lead
+              Adicione as informações para registrar um novo lead
             </p>
           </div>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSave}>
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div>
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
@@ -94,62 +188,95 @@ export default function BasicTables() {
                     <Input
                       type="text"
                       placeholder="Nome fantasia da empresa"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                   </div>
                   <div>
                     <Label>Telefone</Label>
-                    <Input type="phoneNumber"
-                      placeholder="(11) 90011-0011" />
+                    <Input
+                      type="text"
+                      placeholder="(11) 90011-0011"
+                      value={formData.phoneNumber}
+                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    />
                   </div>
                   <div>
                     <Label>E-mail</Label>
                     <Input
-                      type="mail"
+                      type="email"
                       placeholder="innnovasfera@innovasfera.com.br"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
                   <div>
                     <Label>Endereço</Label>
-                    <Input type="text"
-                      placeholder="Endereço completo" />
+                    <Input
+                      type="text"
+                      placeholder="Endereço completo"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    />
                   </div>
                   <div>
                     <Label>Site</Label>
-                    <Input type="text"
-                      placeholder="www.innovasfera.com.br" />
+                    <Input
+                      type="text"
+                      placeholder="www.innovasfera.com.br"
+                      value={formData.webSite || ""}
+                      onChange={(e) => setFormData({ ...formData, webSite: e.target.value })}
+                    />
                   </div>
                   <div>
                     <Label>Rede Social</Label>
-                    <Input type="text"
-                      placeholder="@innovasfera" />
+                    <Input
+                      type="text"
+                      placeholder="@innovasfera"
+                      value={formData.social || ""}
+                      onChange={(e) => setFormData({ ...formData, social: e.target.value })}
+                    />
                   </div>
                   <div>
                     <Label>Avaliação</Label>
-                    <Input type="number"
-                      placeholder="1" />
-                  </div>
-                  <div>
-                    <Label>Status</Label>
-                    <select>
-                      <option value={0}>Novo</option>
-                    </select>
+                    <Input
+                      type="number"
+                      placeholder="1"
+                      value={formData.star}
+                      onChange={(e) => setFormData({ ...formData, star: e.target.value })}
+                    />
                   </div>
                   <div>
                     <Label>Categoria</Label>
-                    <select>
-                      <option value={0}>Odonto</option>
-                    </select>
+                    <Select
+                      options={optionsCategoryLead}
+                      placeholder="Categoria do negócio"
+                      onChange={handleSelectChangeCategory}
+                      className="dark:bg-dark-900"
+                    />
+                  </div>
+                  <div>
+                    <Label>Status</Label>
+                    <Select
+                      options={options}
+                      placeholder="Selecione um status"
+                      onChange={handleSelectChange}
+                      className="dark:bg-dark-900"
+                    />
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
               <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
+                Cancelar
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
-              </Button>
+              <button
+                className="bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm inline-flex items-center justify-center gap-2 rounded-lg transition"
+                type="submit"
+              >
+                Salvar
+              </button>
             </div>
           </form>
         </div>
