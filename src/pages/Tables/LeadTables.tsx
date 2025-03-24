@@ -76,76 +76,69 @@ export default function BasicTables() {
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Personal Information
+              Adicionar um lead novo
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
+              Adicione as informações para registrar um novo Lead
             </p>
           </div>
           <form className="flex flex-col">
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div>
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
+                  Informações
                 </h5>
-
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div>
-                    <Label>Facebook</Label>
+                    <Label>Nome</Label>
                     <Input
                       type="text"
-                      value="https://www.facebook.com/PimjoHQ"
+                      placeholder="Nome fantasia da empresa"
                     />
                   </div>
-
                   <div>
-                    <Label>X.com</Label>
-                    <Input type="text" value="https://x.com/PimjoHQ" />
+                    <Label>Telefone</Label>
+                    <Input type="phoneNumber"
+                      placeholder="(11) 90011-0011" />
                   </div>
-
                   <div>
-                    <Label>Linkedin</Label>
+                    <Label>E-mail</Label>
                     <Input
-                      type="text"
-                      value="https://www.linkedin.com/company/pimjo"
+                      type="mail"
+                      placeholder="innnovasfera@innovasfera.com.br"
                     />
                   </div>
-
                   <div>
-                    <Label>Instagram</Label>
-                    <Input type="text" value="https://instagram.com/PimjoHQ" />
+                    <Label>Endereço</Label>
+                    <Input type="text"
+                      placeholder="Endereço completo" />
                   </div>
-                </div>
-              </div>
-              <div className="mt-7">
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Personal Information
-                </h5>
-
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>First Name</Label>
-                    <Input type="text" value="Musharof" />
+                  <div>
+                    <Label>Site</Label>
+                    <Input type="text"
+                      placeholder="www.innovasfera.com.br" />
                   </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Last Name</Label>
-                    <Input type="text" value="Chowdhury" />
+                  <div>
+                    <Label>Rede Social</Label>
+                    <Input type="text"
+                      placeholder="@innovasfera" />
                   </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Email Address</Label>
-                    <Input type="text" value="randomuser@pimjo.com" />
+                  <div>
+                    <Label>Avaliação</Label>
+                    <Input type="number"
+                      placeholder="1" />
                   </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input type="text" value="+09 363 398 46" />
+                  <div>
+                    <Label>Status</Label>
+                    <select>
+                      <option value={0}>Novo</option>
+                    </select>
                   </div>
-
-                  <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" value="Team Manager" />
+                  <div>
+                    <Label>Categoria</Label>
+                    <select>
+                      <option value={0}>Odonto</option>
+                    </select>
                   </div>
                 </div>
               </div>
