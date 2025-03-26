@@ -7,7 +7,7 @@ import {
 } from "../../ui/table";
 
 import Badge from "../../ui/badge/Badge";
-import { getAllAsync, getFirstOrDefaultLeadAsync, putAsync, postEmailAsync } from "../../../services/LeadsGoogleService";
+import { getAllAsync, getFirstOrDefaultLeadAsync, putAsync, postEmailAsync, deleteLeadAsync } from "../../../services/LeadsGoogleService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Modal } from "../../ui/modal";
 import Label from "../../form/Label";
@@ -16,6 +16,7 @@ import Select from "../../form/Select";
 import Button from "../../ui/button/Button";
 import { useModal } from "../../../hooks/useModal";
 import { useModal as useModelEmail } from "../../../hooks/useModal";
+import { useModal as useModelDelete } from "../../../hooks/useModal";
 import { useState } from "react";
 import { LeadGoogleDto } from "../../../models/LeadsGoogleDto";
 import TextArea from "../../form/input/TextArea";
@@ -24,10 +25,7 @@ import { EmailDto } from "../../../models/EmailDto";
 export default function BasicTableOne() {
 
   const [formData, setFormData] = useState<LeadGoogleDto>({
-    id: {
-      timestamp: 0,
-      creationTime: "",
-    },
+    id: "",
     name: "",
     phoneNumber: "",
     category: "",
@@ -38,14 +36,18 @@ export default function BasicTableOne() {
     email: "",
     status: 0,
     observacao: "",
-    social: ""
+    social: "",
+    boxEmail: ""
   });
 
   const [formDataEmail, setFormDataEmail] = useState<EmailDto>({
     body: "",
     subject: "",
-    to: ""
+    to: "",
+    boxTo: ""
   });
+
+  const [idDeleteRegister, setIdDeleteRegister] = useState<string>("");
 
   const queryClient = useQueryClient();
 
@@ -69,6 +71,16 @@ export default function BasicTableOne() {
     },
   });
 
+  const mutationDelete = useMutation({
+    mutationFn: deleteLeadAsync,
+    onSuccess: () => {
+      queryClient.invalidateQueries<LeadGoogleDto[]>({
+        queryKey: ["leadGoogle"],
+      });
+      closeModalDelete();
+    },
+  });
+
   const { data: leads, isLoading, isError } = useQuery({
     queryKey: ["leadGoogle"],
     queryFn: () => getAllAsync(),
@@ -78,6 +90,8 @@ export default function BasicTableOne() {
 
   const { isOpen: isOpenEmail, openModal: openModalEmail, closeModal: closeModalEmail } = useModelEmail();
 
+  const { isOpen: isOpenDelete, openModal: openModalDelete, closeModal: closeModalDelete } = useModelDelete();
+
   const handleOpenModal = (name: string, category: string, phoneNumber: string) => {
     loadLeadData(name, category, phoneNumber);
     openModal();
@@ -85,6 +99,11 @@ export default function BasicTableOne() {
 
   const handleOpenModalEmail = () => {
     openModalEmail();
+  };
+
+  const handleOpenModalDelete = (id: string) => {
+    setIdDeleteRegister(id);
+    openModalDelete();
   };
 
 
@@ -115,8 +134,16 @@ export default function BasicTableOne() {
   const handlePostEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     mutationEmail.mutate(formDataEmail)
-    closeModal();
+    closeModalEmail();
   };
+
+  const handlePostDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    mutationDelete.mutate(idDeleteRegister);
+    setIdDeleteRegister("");
+    closeModalDelete();
+  };
+
 
   const optionsCategoryLeadEdit = [
     { value: "odontologia", label: "Odontologia" },
@@ -166,6 +193,13 @@ export default function BasicTableOne() {
     { value: "9", label: "Convertido" }
   ];
 
+  const optionsEmailEdit = [
+    { value: "0", label: "Comercial" },
+    { value: "1", label: "Felipe Santana" },
+    { value: "2", label: "Guilherme Oliveira" },
+    { value: "3", label: "Gustavo Nascimento" }
+  ];
+
   const handleSelectChangeEdit = (value: string) => {
     formData.status = Number.parseInt(value);
   };
@@ -173,6 +207,11 @@ export default function BasicTableOne() {
   const handleSelectChangeCategoryEdit = (value: string) => {
     formData.category = value;
   };
+
+  const handleSelectChangeEmailEdit = (value: string) => {
+    formDataEmail.boxTo = value;
+  };
+
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -216,6 +255,12 @@ export default function BasicTableOne() {
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
                 Site
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                E-mail
               </TableCell>
               <TableCell
                 isHeader
@@ -303,7 +348,16 @@ export default function BasicTableOne() {
                   {lead.address}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {lead.webSite}
+                  <a
+                    href={lead.webSite?.startsWith("http") ? lead.webSite : `https://${lead.webSite}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {lead.webSite}
+                  </a>
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {lead.email}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                   {lead.observacao}
@@ -330,16 +384,16 @@ export default function BasicTableOne() {
                         />
                       </svg>
                     </button>
-                    <a
-                      href="https://www.facebook.com/PimjoHQ"
-                      target="_blank"
+
+                    <button
+                      onClick={() => handleOpenModalDelete(lead.id)}
                       rel="noopener"
                       className="p-3 flex h-11 w-11 items-center justify-center rounded-full border border-red-300 bg-white text-sm font-medium text-red-700 shadow-theme-xs hover:bg-red-50 hover:text-red-800 dark:border-red-700 dark:bg-red-800 dark:text-red-400 dark:hover:bg-white/[0.03] dark:hover:text-red-200"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                       </svg>
-                    </a>
+                    </button>
 
                     <a
                       href={`https://wa.me/+55${lead.phoneNumber.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')}?text=Ol%C3%A1%2C%20sou%20representante%20da%20InnovaSfera!%20Uma%20empresa%20de%20tecnologia%20voltada%20para%20atender%20demandas%20sob-medida!`}
@@ -501,6 +555,17 @@ export default function BasicTableOne() {
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Informações
                 </h5>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-1">
+                  <div>
+                    <Label>Caixa de email</Label>
+                    <Select
+                      options={optionsEmailEdit}
+                      placeholder="Caixa de e-mail"
+                      onChange={handleSelectChangeEmailEdit}
+                      className="dark:bg-dark-900"
+                    />
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div>
                     <Label>Para quem vai enviar</Label>
@@ -560,7 +625,38 @@ export default function BasicTableOne() {
               </div>
             </div>
           </form>
+        </div>
+      </Modal>
 
+      <Modal isOpen={isOpenDelete} onClose={closeModalDelete} className="max-w-[700px] m-4">
+        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+          <div className="px-2 pr-14">
+            <h4 className="mb-2 text-2xl font-semibold text-center text-gray-800 dark:text-white/90">
+              Apagar Lead
+            </h4>
+          </div>
+          <form className="flex flex-col" onSubmit={handlePostDelete}>
+            <div className="custom-scrollbar overflow-y-auto px-2 pb-3">
+              <div>
+                <h5 className="mb-5 text-lg font-medium text-gray-800 text-center dark:text-white/90 lg:mb-6">
+                  Tem certeza que deseja apagar este registro?
+                </h5>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2 items-center text-center">
+              <div className="flex items-center gap-3 px-2 mt-6 lg:justify-center">
+                <Button size="sm" variant="outline" onClick={closeModalDelete}>
+                  Cancelar
+                </Button>
+                <button
+                  className="bg-red-500 text-white shadow-theme-xs hover:bg-red-600 disabled:bg-red-300 px-4 py-3 text-sm inline-flex items-center justify-center gap-2 rounded-lg transition"
+                  type="submit"
+                >
+                  Apagar
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </Modal>
     </div>

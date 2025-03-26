@@ -41,3 +41,11 @@ export const getFirstOrDefaultLeadAsync = async (
         )
     ).data;
 };
+
+export const deleteLeadAsync = async (
+    request: string
+): Promise<boolean> => {
+    return (
+        await instanceApi.delete<boolean>("/LeadGoogleInnova/DeleteLeadGoogle/" + request)
+    ).data;
+};

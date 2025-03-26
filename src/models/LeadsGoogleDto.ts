@@ -1,5 +1,5 @@
 export interface LeadGoogleDto {
-    id: DocumentDbId;
+    id: string;
     name: string;
     phoneNumber: string;
     category: string;
@@ -11,9 +11,6 @@ export interface LeadGoogleDto {
     social: string;
     status: number;
     observacao: string;
+    boxEmail: string;
 }
 
-interface DocumentDbId {
-    timestamp: number;
-    creationTime: string;
-  }

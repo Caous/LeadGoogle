@@ -16,10 +16,7 @@ export default function BasicTables() {
 
   const { isOpen, openModal, closeModal } = useModal();
   const [formData, setFormData] = useState<LeadGoogleDto>({
-    id: {
-      timestamp: 0, 
-      creationTime: "",
-    },
+    id: "",
     name: "",
     phoneNumber: "",
     category: "",
@@ -30,7 +27,8 @@ export default function BasicTables() {
     email: "",
     status: 0,
     observacao: "",
-    social: ""
+    social: "",
+    boxEmail: ""
   });
 
   const queryClient = useQueryClient();
