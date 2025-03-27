@@ -12,5 +12,12 @@ export interface LeadGoogleDto {
     status: number;
     observacao: string;
     boxEmail: string;
+    historico: HistoricoLead[];
+}
+
+export interface HistoricoLead {
+    assunto: string;
+    descricao: string;
+    dataAtualizacao: string; // Date pode ser tratado como string no JSON
 }
 

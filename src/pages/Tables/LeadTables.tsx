@@ -11,6 +11,7 @@ import { useModal } from "../../hooks/useModal";
 import { LeadGoogleDto } from "../../models/LeadsGoogleDto";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postAsync } from "../../services/LeadsGoogleService";
+import TextArea from "../../components/form/input/TextArea";
 
 export default function BasicTables() {
 
@@ -28,7 +29,8 @@ export default function BasicTables() {
     status: 0,
     observacao: "",
     social: "",
-    boxEmail: ""
+    boxEmail: "",
+    historico: []
   });
 
   const queryClient = useQueryClient();
@@ -49,51 +51,54 @@ export default function BasicTables() {
   };
 
   const optionsCategoryLead = [
-    { value: "odontologia", label: "Odontologia" },
-    { value: "clinica-medica", label: "Clínica Médica" },
-    { value: "hospital", label: "Hospital" },
-    { value: "farmacia", label: "Farmácia" },
-    { value: "mecanico", label: "Mecânico" },
-    { value: "auto-peças", label: "Autopeças" },
-    { value: "concessionaria", label: "Concessionária" },
-    { value: "mercado", label: "Supermercado" },
-    { value: "padaria", label: "Padaria" },
-    { value: "restaurante", label: "Restaurante" },
-    { value: "lanchonete", label: "Lanchonete" },
-    { value: "petshop", label: "Pet Shop" },
     { value: "academia", label: "Academia" },
-    { value: "estetica", label: "Clínica de Estética" },
-    { value: "barbearia", label: "Barbearia" },
-    { value: "salão-beleza", label: "Salão de Beleza" },
-    { value: "hotel", label: "Hotel" },
-    { value: "motel", label: "Motel" },
-    { value: "pousada", label: "Pousada" },
-    { value: "imobiliaria", label: "Imobiliária" },
     { value: "advocacia", label: "Escritório de Advocacia" },
+    { value: "auto-peças", label: "Autopeças" },
+    { value: "barbearia", label: "Barbearia" },
+    { value: "clinica-medica", label: "Clínica Médica" },
+    { value: "concessionaria", label: "Concessionária" },
+    { value: "construcao", label: "Materiais de Construção" },
     { value: "contabilidade", label: "Escritório de Contabilidade" },
     { value: "escola", label: "Escola" },
+    { value: "estetica", label: "Clínica de Estética" },
+    { value: "eventos", label: "Eventos" },
     { value: "faculdade", label: "Faculdade" },
-    { value: "loja-roupas", label: "Loja de Roupas" },
-    { value: "loja-celular", label: "Assistência Técnica Celular" },
-    { value: "informatica", label: "Assistência Técnica Informática" },
-    { value: "lavanderia", label: "Lavanderia" },
+    { value: "farmacia", label: "Farmácia" },
     { value: "floricultura", label: "Floricultura" },
+    { value: "hospital", label: "Hospital" },
+    { value: "hotel", label: "Hotel" },
+    { value: "imobiliaria", label: "Imobiliária" },
+    { value: "informatica", label: "Assistência Técnica Informática" },
+    { value: "lanchonete", label: "Lanchonete" },
+    { value: "lavanderia", label: "Lavanderia" },
     { value: "livraria", label: "Livraria" },
-    { value: "construcao", label: "Materiais de Construção" },
-    { value: "moveis", label: "Loja de Móveis" }
+    { value: "loja-celular", label: "Assistência Técnica Celular" },
+    { value: "loja-roupas", label: "Loja de Roupas" },
+    { value: "marketing", label: "Marketing" },
+    { value: "mecanico", label: "Mecânico" },
+    { value: "mercado", label: "Supermercado" },
+    { value: "motel", label: "Motel" },
+    { value: "moveis", label: "Loja de Móveis" },
+    { value: "odontologia", label: "Odontologia" },
+    { value: "padaria", label: "Padaria" },
+    { value: "petshop", label: "Pet Shop" },
+    { value: "pousada", label: "Pousada" },
+    { value: "restaurante", label: "Restaurante" },
+    { value: "salão-beleza", label: "Salão de Beleza" },
+    { value: "show", label: "Show" }
   ];
 
   const options = [
-    { value: "0", label: "Novo" },
-    { value: "1", label: "Buscando informações" },
-    { value: "2", label: "Prospecção" },
     { value: "3", label: "Aguardando decisão" },
-    { value: "4", label: "Negociação" },
-    { value: "5", label: "Reunião" },
+    { value: "1", label: "Buscando informações" },
     { value: "6", label: "Cancelado" },
-    { value: "7", label: "Requalificado" },
+    { value: "9", label: "Convertido" },
+    { value: "4", label: "Negociação" },
+    { value: "0", label: "Novo" },
+    { value: "2", label: "Prospecção" },
     { value: "8", label: "Qualificado" },
-    { value: "9", label: "Convertido" }
+    { value: "7", label: "Requalificado" },
+    { value: "5", label: "Reunião" }
   ];
 
   const handleSelectChange = (value: string) => {
@@ -253,15 +258,26 @@ export default function BasicTables() {
                       className="dark:bg-dark-900"
                     />
                   </div>
+                </div>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-1">
                   <div>
-                    <Label>Status</Label>
-                    <Select
-                      options={options}
-                      placeholder="Selecione um status"
-                      onChange={handleSelectChange}
-                      className="dark:bg-dark-900"
+                    <Label>Observação</Label>
+                    <TextArea
+                      placeholder="Escreva a observação"
+                      value={formData.observacao}
+                      onChange={(e) => setFormData({ ...formData, observacao: e })}
                     />
+
                   </div>
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <Select
+                    options={options}
+                    placeholder="Selecione um status"
+                    onChange={handleSelectChange}
+                    className="dark:bg-dark-900"
+                  />
                 </div>
               </div>
             </div>

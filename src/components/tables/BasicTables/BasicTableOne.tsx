@@ -37,7 +37,8 @@ export default function BasicTableOne() {
     status: 0,
     observacao: "",
     social: "",
-    boxEmail: ""
+    boxEmail: "",
+    historico: []
   });
 
   const [formDataEmail, setFormDataEmail] = useState<EmailDto>({
@@ -146,52 +147,56 @@ export default function BasicTableOne() {
 
 
   const optionsCategoryLeadEdit = [
-    { value: "odontologia", label: "Odontologia" },
-    { value: "clinica-medica", label: "Clínica Médica" },
-    { value: "hospital", label: "Hospital" },
-    { value: "farmacia", label: "Farmácia" },
-    { value: "mecanico", label: "Mecânico" },
-    { value: "auto-peças", label: "Autopeças" },
-    { value: "concessionaria", label: "Concessionária" },
-    { value: "mercado", label: "Supermercado" },
-    { value: "padaria", label: "Padaria" },
-    { value: "restaurante", label: "Restaurante" },
-    { value: "lanchonete", label: "Lanchonete" },
-    { value: "petshop", label: "Pet Shop" },
     { value: "academia", label: "Academia" },
-    { value: "estetica", label: "Clínica de Estética" },
-    { value: "barbearia", label: "Barbearia" },
-    { value: "salão-beleza", label: "Salão de Beleza" },
-    { value: "hotel", label: "Hotel" },
-    { value: "motel", label: "Motel" },
-    { value: "pousada", label: "Pousada" },
-    { value: "imobiliaria", label: "Imobiliária" },
     { value: "advocacia", label: "Escritório de Advocacia" },
+    { value: "auto-peças", label: "Autopeças" },
+    { value: "barbearia", label: "Barbearia" },
+    { value: "clinica-medica", label: "Clínica Médica" },
+    { value: "concessionaria", label: "Concessionária" },
+    { value: "construcao", label: "Materiais de Construção" },
     { value: "contabilidade", label: "Escritório de Contabilidade" },
     { value: "escola", label: "Escola" },
+    { value: "estetica", label: "Clínica de Estética" },
+    { value: "eventos", label: "Eventos" },
     { value: "faculdade", label: "Faculdade" },
-    { value: "loja-roupas", label: "Loja de Roupas" },
-    { value: "loja-celular", label: "Assistência Técnica Celular" },
-    { value: "informatica", label: "Assistência Técnica Informática" },
-    { value: "lavanderia", label: "Lavanderia" },
+    { value: "farmacia", label: "Farmácia" },
     { value: "floricultura", label: "Floricultura" },
+    { value: "hospital", label: "Hospital" },
+    { value: "hotel", label: "Hotel" },
+    { value: "imobiliaria", label: "Imobiliária" },
+    { value: "informatica", label: "Assistência Técnica Informática" },
+    { value: "lanchonete", label: "Lanchonete" },
+    { value: "lavanderia", label: "Lavanderia" },
     { value: "livraria", label: "Livraria" },
-    { value: "construcao", label: "Materiais de Construção" },
-    { value: "moveis", label: "Loja de Móveis" }
+    { value: "loja-celular", label: "Assistência Técnica Celular" },
+    { value: "loja-roupas", label: "Loja de Roupas" },
+    { value: "marketing", label: "Marketing" },
+    { value: "mecanico", label: "Mecânico" },
+    { value: "mercado", label: "Supermercado" },
+    { value: "motel", label: "Motel" },
+    { value: "moveis", label: "Loja de Móveis" },
+    { value: "odontologia", label: "Odontologia" },
+    { value: "padaria", label: "Padaria" },
+    { value: "petshop", label: "Pet Shop" },
+    { value: "pousada", label: "Pousada" },
+    { value: "restaurante", label: "Restaurante" },
+    { value: "salão-beleza", label: "Salão de Beleza" },
+    { value: "show", label: "Show" }
   ];
 
   const optionsEdit = [
-    { value: "0", label: "Novo" },
-    { value: "1", label: "Buscando informações" },
-    { value: "2", label: "Prospecção" },
     { value: "3", label: "Aguardando decisão" },
-    { value: "4", label: "Negociação" },
-    { value: "5", label: "Reunião" },
+    { value: "1", label: "Buscando informações" },
     { value: "6", label: "Cancelado" },
-    { value: "7", label: "Requalificado" },
+    { value: "9", label: "Convertido" },
+    { value: "4", label: "Negociação" },
+    { value: "0", label: "Novo" },
+    { value: "2", label: "Prospecção" },
     { value: "8", label: "Qualificado" },
-    { value: "9", label: "Convertido" }
+    { value: "7", label: "Requalificado" },
+    { value: "5", label: "Reunião" }
   ];
+
 
   const optionsEmailEdit = [
     { value: "0", label: "Comercial" },
@@ -396,7 +401,7 @@ export default function BasicTableOne() {
                     </button>
 
                     <a
-                      href={`https://wa.me/+55${lead.phoneNumber.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')}?text=Ol%C3%A1%2C%20sou%20representante%20da%20InnovaSfera!%20Uma%20empresa%20de%20tecnologia%20voltada%20para%20atender%20demandas%20sob-medida!`}
+                      href={`https://wa.me/+55${lead.phoneNumber.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')}?text=Transforme%20seu%20Neg%C3%B3cio%20com%20a%20InnovaSfera!%20%F0%9F%9A%80%0A%0AOl%C3%A1%20%7BCliente%7D%20tudo%20bem%3F%20Somos%20a%20InnovaSfera%2C%20somos%20especializados%20em%20solu%C3%A7%C3%B5es%20digitais%20personalizadas%20para%20empresas%20que%20buscam%20alavancar%20seus%20resultados%2C%20expandir%20sua%20presen%C3%A7a%20online%20e%20melhorar%20mais%20ainda%20seus%20esfor%C3%A7os.%20Se%20voc%C3%AA%20precisa%20de%20um%20site%20dedicado%20para%20mostrar%20o%20melhor%20do%20seu%20neg%C3%B3cio%2C%20integrar%20um%20chatbot%20no%20WhatsApp%20para%20atendimento%20%C3%A1gil%20ou%20de%20consultoria%20estrat%C3%A9gica%20para%20impulsionar%20suas%20vendas%20e%20resultados%2C%20temos%20a%20solu%C3%A7%C3%A3o%20certa%20para%20voc%C3%AA!%0A%0A%F0%9F%94%B9%20Cria%C3%A7%C3%A3o%20de%20Sites%3A%20Websites%20otimizados%20e%20responsivos%2C%20criados%20especialmente%20para%20atender%20%C3%A0s%20necessidades%20do%20seu%20neg%C3%B3cio.%0A%0A%F0%9F%94%B9%20Chatbot%20no%20WhatsApp%3A%20Automatize%20o%20atendimento%20e%20se%20conecte%20com%20seus%20clientes%20de%20forma%20r%C3%A1pida%20e%20eficiente.%0A%0A%F0%9F%94%B9%20Consultoria%20Estrat%C3%A9gica%3A%20Estrat%C3%A9gias%20para%20alavancar%20seu%20neg%C3%B3cio%20e%20conquistar%20resultados%20extraordin%C3%A1rios%2C%20com%20foco%20no%20crescimento%20e%20na%20inova%C3%A7%C3%A3o.%0A%0AN%C3%A3o%20deixe%20de%20aproveitar%20as%20oportunidades%20que%20a%20transforma%C3%A7%C3%A3o%20digital%20oferece!%20Entre%20em%20contato%20com%20a%20gente%20e%20saiba%20como%20podemos%20impulsionar%20o%20seu%20neg%C3%B3cio.%0A%0A%F0%9F%93%9E%2011%2096510-8080%0A%F0%9F%8C%90%20innova-sfera-site.vercel.app%0A%0AVamos%20juntos%20inovar%20e%20crescer!%20%E2%9C%A8`}
                       target="_blank"
                       rel="noopener"
                       className="p-3 flex h-11 w-11 items-center justify-center rounded-full border border-green-300 bg-white text-sm font-medium text-green-700 shadow-theme-xs hover:bg-green-50 hover:text-green-800 dark:border-green-700 dark:bg-green-800 dark:text-green-400 dark:hover:bg-white/[0.03] dark:hover:text-green-200"
@@ -512,15 +517,26 @@ export default function BasicTableOne() {
                       className="dark:bg-dark-900"
                     />
                   </div>
+                </div>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-1">
                   <div>
-                    <Label>Status</Label>
-                    <Select
-                      options={optionsEdit}
-                      placeholder="Selecione um status"
-                      onChange={handleSelectChangeEdit}
-                      className="dark:bg-dark-900"
+                    <Label>Observação</Label>
+                    <TextArea
+                      placeholder="Escreva a observação"
+                      value={formData.observacao}
+                      onChange={(e) => setFormData({ ...formData, observacao: e })}
                     />
+
                   </div>
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <Select
+                    options={optionsEdit}
+                    placeholder="Selecione um status"
+                    onChange={handleSelectChangeEdit}
+                    className="dark:bg-dark-900"
+                  />
                 </div>
               </div>
             </div>
@@ -587,7 +603,6 @@ export default function BasicTableOne() {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-1">
-
                   <div>
                     <Label>Mensagem de e-mail</Label>
                     <TextArea
